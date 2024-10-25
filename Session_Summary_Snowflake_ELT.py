@@ -51,15 +51,15 @@ def run_ctas(table, select_sql, primary_key=None, duplicate_check_columns=None):
             if duplicates:
                 raise Exception(f"Duplicate records found based on {duplicate_check_columns}: {duplicates}")
 
-        # # Hash-based duplicate check
-        # if duplicate_check_columns:
-        #     columns = ', '.join(duplicate_check_columns)
-        #     hash_sql = f"SELECT MD5({columns}), COUNT(*) FROM {table} GROUP BY MD5({columns}) HAVING COUNT(*) > 1"
-        #     logging.info(f"Running hash-based duplicate check: {hash_sql}")
-        #     cur.execute(hash_sql)
-        #     hash_duplicates = cur.fetchall()
-        #     if hash_duplicates:
-        #         raise Exception(f"Hash-based duplicate records found: {hash_duplicates}")
+        # Hash-based duplicate check
+        if duplicate_check_columns:
+            columns = ', '.join(duplicate_check_columns)
+            hash_sql = f"SELECT MD5({columns}), COUNT(*) FROM {table} GROUP BY MD5({columns}) HAVING COUNT(*) > 1"
+            logging.info(f"Running hash-based duplicate check: {hash_sql}")
+            cur.execute(hash_sql)
+            hash_duplicates = cur.fetchall()
+            if hash_duplicates:
+                raise Exception(f"Hash-based duplicate records found: {hash_duplicates}")
 
         cur.execute("COMMIT;")
     except Exception as e:
