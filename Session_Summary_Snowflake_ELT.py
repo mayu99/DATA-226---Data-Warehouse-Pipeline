@@ -13,7 +13,6 @@ This pipeline will run after Session_Stage_Load_ETL is executed. Below two table
 """
 
 def return_snowflake_conn():
-    # Initialize the SnowflakeHook
     hook = SnowflakeHook(snowflake_conn_id='snowflake_conn')
     conn = hook.get_conn()
     return conn.cursor()
@@ -83,10 +82,9 @@ with DAG(
     JOIN dev.raw_data.session_timestamp s ON u.sessionId=s.sessionId
     """
 
-    # Run the task with primary key uniqueness, multi-column check, and hash-based duplicate check
     run_ctas(
         table, 
         select_sql, 
         primary_key='sessionId', 
-        duplicate_check_columns=['userId', 'sessionId']  # Example: Check for duplicates based on 'userId' and 'sessionId'
+        duplicate_check_columns=['userId', 'sessionId']  
     )
